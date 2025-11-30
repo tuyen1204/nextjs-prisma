@@ -10,11 +10,11 @@ export default function NewPost() {
     const title = formData.get("title") as string;
     const content = formData.get("content") as string;
 
-    await prisma.post.create({
+    await prisma.blog.create({
       data: {
         title,
         content,
-        authorId: 1,
+        userId: 1,
       },
     });
 
