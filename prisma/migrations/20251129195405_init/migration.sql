@@ -1,38 +1,22 @@
-/*
-  Warnings:
+-- CreateTable
+CREATE TABLE "roles" (
+    "id" SERIAL NOT NULL,
+    "name" TEXT NOT NULL,
+    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updatedAt" TIMESTAMP(3) NOT NULL,
 
-  - You are about to drop the `account` table. If the table is not empty, all the data it contains will be lost.
-  - You are about to drop the `session` table. If the table is not empty, all the data it contains will be lost.
-  - You are about to drop the `user` table. If the table is not empty, all the data it contains will be lost.
-  - You are about to drop the `verification` table. If the table is not empty, all the data it contains will be lost.
-
-*/
--- DropForeignKey
-ALTER TABLE "account" DROP CONSTRAINT "account_userId_fkey";
-
--- DropForeignKey
-ALTER TABLE "session" DROP CONSTRAINT "session_userId_fkey";
-
--- DropTable
-DROP TABLE "account";
-
--- DropTable
-DROP TABLE "session";
-
--- DropTable
-DROP TABLE "user";
-
--- DropTable
-DROP TABLE "verification";
+    CONSTRAINT "roles_pkey" PRIMARY KEY ("id")
+);
 
 -- CreateTable
 CREATE TABLE "users" (
     "id" SERIAL NOT NULL,
     "name" TEXT,
-    "email" TEXT,
+    "email" TEXT NOT NULL,
     "emailVerified" TIMESTAMP(3),
     "image" TEXT,
     "password" TEXT,
+    "roleId" INTEGER NOT NULL,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3) NOT NULL,
 
@@ -82,6 +66,9 @@ CREATE TABLE "verification_tokens" (
 CREATE UNIQUE INDEX "users_email_key" ON "users"("email");
 
 -- CreateIndex
+CREATE UNIQUE INDEX "users_roleId_key" ON "users"("roleId");
+
+-- CreateIndex
 CREATE UNIQUE INDEX "accounts_provider_providerAccountId_key" ON "accounts"("provider", "providerAccountId");
 
 -- CreateIndex
@@ -89,6 +76,9 @@ CREATE UNIQUE INDEX "sessions_sessionToken_key" ON "sessions"("sessionToken");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "verification_tokens_identifier_token_key" ON "verification_tokens"("identifier", "token");
+
+-- AddForeignKey
+ALTER TABLE "users" ADD CONSTRAINT "users_roleId_fkey" FOREIGN KEY ("roleId") REFERENCES "roles"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "accounts" ADD CONSTRAINT "accounts_userId_fkey" FOREIGN KEY ("userId") REFERENCES "users"("id") ON DELETE CASCADE ON UPDATE CASCADE;

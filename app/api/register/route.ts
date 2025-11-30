@@ -11,13 +11,25 @@ export async function POST(req: Request) {
       return new NextResponse("Missing info", { status: 400 })
     }
 
-    const hashedPassword = await bcrypt.hash(password, 12)
+    const hashedPassword = await bcrypt.hash(password, 10)
+
+    // Tìm default role "User"
+    const userRole = await prisma.role.findFirst({
+      where: { name: "User" },
+    })
+
+    if (!userRole) {
+      // Nếu chưa có role User thì tạo mới (fallback)
+      // Nhưng tốt nhất là seed data đã có
+      return new NextResponse("Default role not found. Please contact admin.", { status: 500 })
+    }
 
     const user = await prisma.user.create({
       data: {
         email,
         name,
         password: hashedPassword,
+        roleId: userRole.id,
       },
     })
 
@@ -27,4 +39,3 @@ export async function POST(req: Request) {
     return new NextResponse("Internal Error", { status: 500 })
   }
 }
-

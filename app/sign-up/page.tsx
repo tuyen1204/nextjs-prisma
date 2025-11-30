@@ -31,6 +31,7 @@ export default function SignUpPage() {
         setError("Registration failed. Try again.");
       }
     } catch (error) {
+      console.error(error);
       setError("Something went wrong.");
     }
   }
