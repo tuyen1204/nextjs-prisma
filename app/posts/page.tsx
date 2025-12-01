@@ -1,4 +1,5 @@
 import prisma from "@/lib/prisma";
+import { Blog, User as PrismaUser } from "@prisma/client";
 
 // Định nghĩa interface cho user
 interface User {
@@ -21,7 +22,7 @@ export default async function Posts() {
   });
 
   // Cast mỗi post về interface BlogWithUser
-  const typedPosts: BlogWithUser[] = posts.map(post => ({
+  const typedPosts: BlogWithUser[] = posts.map((post: Blog & { user: PrismaUser }) => ({
     id: post.id,
     title: post.title,
     user: post.user ? { id: post.user.id, name: post.user.name } : null,
