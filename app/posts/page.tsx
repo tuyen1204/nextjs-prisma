@@ -1,4 +1,5 @@
 import prisma from "@/lib/prisma";
+import type { Blog, User } from "@prisma/client"; // optional
 
 export default async function Posts() {
   const posts = await prisma.blog.findMany({
@@ -7,7 +8,8 @@ export default async function Posts() {
     },
   });
 
-  type PostWithUser = typeof posts[number]; // lấy type từ kết quả findMany
+  // TypeScript tự nhận: post: { id: number; title: string; user: User | null; ... }
+  type PostWithUser = Blog & { user: User | null }; 
 
   return (
     <div className="min-h-screen bg-gray-50 flex flex-col items-center justify-center -mt-16 text-[#333333]">
